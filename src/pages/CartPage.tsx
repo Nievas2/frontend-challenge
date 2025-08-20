@@ -74,7 +74,7 @@ const CartPage = () => {
             {error && <div className="error-message">{error}</div>}
 
             <div className="cart-items-list">
-              {items.map((item: CartItem) => (
+              {items.map((item : CartItem) => (
                 <div
                   key={`${item.id}-${item.selectedColor}-${item.selectedSize}`}
                   className="cart-item"

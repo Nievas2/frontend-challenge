@@ -4,8 +4,6 @@ import { useCart } from './CartContext'
 
 const Header = () => {
   const { items } = useCart()
-  console.log(items);
-  
   return (
     <header className="header">
       <div className="container">
