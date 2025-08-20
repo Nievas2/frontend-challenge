@@ -76,6 +76,10 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.nav .active {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
 .nav-link .material-icons {
   font-size: 18px;
 }
@@ -124,6 +128,10 @@
   padding: 8px 16px;
   border-radius: 6px;
   transition: all 0.2s;
+}
+
+.mobile-nav-link.active {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .mobile-nav-link:hover {

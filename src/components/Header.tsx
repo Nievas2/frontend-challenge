@@ -1,15 +1,19 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
 import "./Header.css"
 import { useCart } from "./CartContext"
 
 const Header = () => {
-  const { items } = useCart()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const patchname = useLocation().pathname
+  const { items } = useCart()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
+
+  // Effect to handle body overflow when menu is open
+  // This prevents the body from scrolling when the mobile menu is open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden"
@@ -40,12 +44,18 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="nav">
-            <Link to="/" className="nav-link l1">
+            <Link
+              to="/"
+              className={`nav-link ${patchname == "/" ? "active" : ""}`}
+            >
               <span className="material-icons">home</span>
               Catálogo
             </Link>
 
-            <Link to="/cart" className="nav-link l1">
+            <Link
+              to="/cart"
+              className={`nav-link ${patchname == "/cart" ? "active" : ""}`}
+            >
               <span className="material-icons">shopping_cart</span>
               Carrito ({items.length})
             </Link>
@@ -59,13 +69,21 @@ const Header = () => {
           </button>
 
           {/* Mobile Dropdown Menu */}
-          <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
-            <Link to="/" className="mobile-nav-link" onClick={toggleMenu}>
+          <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`} >
+            <Link
+              to="/"
+              className={`mobile-nav-link ${patchname == "/" ? "active" : ""}`}
+            >
               <span className="material-icons">home</span>
               Catálogo
             </Link>
 
-            <Link to="/cart" className="mobile-nav-link" onClick={toggleMenu}>
+            <Link
+              to="/cart"
+              className={`mobile-nav-link ${
+                patchname == "/cart" ? "active" : ""
+              }`}
+            >
               <span className="material-icons">shopping_cart</span>
               Carrito ({items.length})
             </Link>
@@ -73,7 +91,6 @@ const Header = () => {
             <div>
               <button
                 className="btn btn-secondary mobile-cta"
-                onClick={toggleMenu}
               >
                 <span className="material-icons">person</span>
                 Iniciar Sesión
