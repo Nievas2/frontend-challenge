@@ -7,6 +7,11 @@
   color: #222;
 }
 
+.message-error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+}
+
 /* Empresa */
 .company-form {
   display: flex;

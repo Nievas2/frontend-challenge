@@ -10,6 +10,7 @@ interface QuoteModalProps {
 const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
   const [companyName, setCompanyName] = useState("")
   const [companyEmail, setCompanyEmail] = useState("")
+  const [errorStock, setErrorStock] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
 
   /* Calculate best pricing for quantity */
@@ -95,10 +96,15 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
           min={1}
           max={product.stock}
           value={quantity}
-          onChange={(e) =>
+          onChange={(e) => {
+            if (parseInt(e.target.value) > product.stock) {
+              return setErrorStock("No hay stock suficiente")
+            }
+            if (errorStock) setErrorStock(null)
             setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-          }
+          }}
         />
+        {errorStock && <div className="message-error">{errorStock}</div>}
         <span className="stock-note">{product.stock} disponibles</span>
       </div>
 

@@ -20,6 +20,22 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     return () => document.removeEventListener("keydown", handleEsc)
   }, [onClose])
 
+  // Effect to handle body overflow when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden"
+      document.body.style.paddingRight = "0px"
+    } else {
+      document.body.style.overflow = "auto"
+      document.body.style.paddingRight = "0px"
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"
+      document.body.style.paddingRight = "0px"
+    }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   /* Render modal using React Portal */
