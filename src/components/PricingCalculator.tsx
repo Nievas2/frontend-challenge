@@ -1,15 +1,18 @@
 import { useState } from 'react'
 import { Product } from '../types/Product'
 import './PricingCalculator.css'
+import { useCart } from './CartContext'
 
 interface PricingCalculatorProps {
   product: Product
+  isInCart: boolean
 }
 
-const PricingCalculator = ({ product }: PricingCalculatorProps) => {
+const PricingCalculator = ({ product, isInCart }: PricingCalculatorProps) => {
   const [quantity, setQuantity] = useState<number>(1)
   const [selectedBreak, setSelectedBreak] = useState<number>(0)
   const [errorStock, setErrorStock] = useState<string | null>(null)
+  const {addToCart} = useCart()
 
   // Calculate best pricing for quantity
   const calculatePrice = (qty: number) => {
@@ -156,6 +159,12 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
         {errorStock && <div className="error-message text-end"
         >{errorStock}</div>}
 
+        {isInCart && (
+         <div className="in-cart-message p1 text-end">
+           El producto ya esta en su carrito.
+         </div>
+        )}
+
         {/* Actions */}
         <div className="calculator-actions">
           <button 
@@ -173,7 +182,7 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
             className="btn btn-primary cta1"
             onClick={() => {
               // Add to cart functionality
-              alert('Función de agregar al carrito por implementar')
+              addToCart(product, quantity)
             }}
             disabled={errorStock !== null} // Disable if there's a stock error
           >

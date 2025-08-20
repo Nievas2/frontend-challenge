@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { products } from '../data/products'
 import { Product } from '../types/Product'
 import PricingCalculator from '../components/PricingCalculator'
+import { useCart } from '../components/CartContext'
 import './ProductDetail.css'
 
 const ProductDetail = () => {
@@ -11,7 +12,18 @@ const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState<string>('')
   const [selectedSize, setSelectedSize] = useState<string>('')
   const [errorStock, setErrorStock] = useState<string | null>(null)
+  const [isInCart, setIsInCart] = useState<boolean>(false)
   const [quantity, setQuantity] = useState<number>(1)
+  const {  addToCart, checkIsInCart, items } = useCart()
+
+  useEffect(() => {
+    const cartItem = checkIsInCart(parseInt(id ?? '0'), selectedColor, selectedSize)
+    if (cartItem) {
+      setIsInCart(true)
+    } else {
+      setIsInCart(false)
+    }
+  }, [items, selectedColor, selectedSize])
 
   useEffect(() => {
     if (id) {
@@ -208,7 +220,9 @@ const ProductDetail = () => {
                 <button 
                   className={`btn btn-primary cta1 ${!canAddToCart ? 'disabled' : ''}`}
                   disabled={!canAddToCart}
-                  onClick={() => alert('Función de agregar al carrito por implementar')}
+                  onClick={() =>{
+                    addToCart(product, quantity, selectedColor, selectedSize)
+                  }}
                 >
                   <span className="material-icons">shopping_cart</span>
                   {canAddToCart ? 'Agregar al carrito' : 'No disponible'}
@@ -222,13 +236,18 @@ const ProductDetail = () => {
                   Solicitar cotización
                 </button>
               </div>
+              {isInCart && (
+                <div className="in-cart-message p1">
+                  El producto ya esta en su carrito.
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Pricing Calculator */}
         <div className="pricing-section">
-          <PricingCalculator product={product} />
+          <PricingCalculator product={product} isInCart={isInCart} />
         </div>
       </div>
     </div>
