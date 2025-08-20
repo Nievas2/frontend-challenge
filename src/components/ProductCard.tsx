@@ -1,20 +1,28 @@
-import { Link } from 'react-router-dom'
-import { Product } from '../types/Product'
-import './ProductCard.css'
+import { Link } from "react-router-dom"
+import { Product } from "../types/Product"
+import "./ProductCard.css"
+import Modal from "./Modal"
+import { useState } from "react"
+import QuoteModal from "./QuoteModal"
+import { useCart } from "./CartContext"
 
 interface ProductCardProps {
   product: Product
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { addToCart } = useCart()
   // Handle product status display
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
+      case "active":
         return <span className="status-badge status-active l1">Disponible</span>
-      case 'inactive':
-        return <span className="status-badge status-inactive l1">No disponible</span>
-      case 'pending':
+      case "inactive":
+        return (
+          <span className="status-badge status-inactive l1">No disponible</span>
+        )
+      case "pending":
         // Handle pending status
         return <span className="status-badge status-pending l1">Pendiente</span>
       default:
@@ -32,7 +40,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     if (stock === 0) {
       return <span className="stock-status out-of-stock l1">Sin stock</span>
     } else if (stock < 10) {
-      return <span className="stock-status low-stock l1">Stock bajo ({stock})</span>
+      return (
+        <span className="stock-status low-stock l1">Stock bajo ({stock})</span>
+      )
     }
     return <span className="stock-status in-stock l1">{stock} disponibles</span>
   }
@@ -55,11 +65,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <div className="image-placeholder">
             <span className="material-icons">image</span>
           </div>
-          
+
           {/* Status Badge */}
-          <div className="product-status">
-            {getStatusBadge(product.status)}
-          </div>
+          <div className="product-status">{getStatusBadge(product.status)}</div>
         </div>
 
         {/* Product Info */}
@@ -74,7 +82,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               <span className="material-icons">category</span>
               <span className="l1">{product.category}</span>
             </div>
-            
+
             {getStockStatus(product.stock)}
           </div>
 
@@ -82,7 +90,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {product.features && (
             <div className="product-features">
               {product.features.map((feature, index) => (
-                <span key={index} className="feature-tag l1">{feature}</span>
+                <span key={index} className="feature-tag l1">
+                  {feature}
+                </span>
               ))}
             </div>
           )}
@@ -90,13 +100,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {/* Colors */}
           {product.colors && product.colors.length > 0 && (
             <div className="product-colors">
-              <span className="colors-label l1">{product.colors.length} colores:</span>
+              <span className="colors-label l1">
+                {product.colors.length} colores:
+              </span>
               <div className="colors-preview">
                 {product.colors.slice(0, 3).map((color, index) => (
                   <div key={index} className="color-dot" title={color}></div>
                 ))}
                 {product.colors.length > 3 && (
-                  <span className="more-colors l1">+{product.colors.length - 3}</span>
+                  <span className="more-colors l1">
+                    +{product.colors.length - 3}
+                  </span>
                 )}
               </div>
             </div>
@@ -107,21 +121,25 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Product Footer */}
       <div className="product-footer">
         <div className="price-section">
-          <div className="current-price p1-medium">{formatPrice(product.basePrice)}</div>
+          <div className="current-price p1-medium">
+            {formatPrice(product.basePrice)}
+          </div>
           {getDiscountPrice() && (
             <div className="discount-info">
-              <span className="discount-price l1">{formatPrice(getDiscountPrice()!)}</span>
+              <span className="discount-price l1">
+                {formatPrice(getDiscountPrice()!)}
+              </span>
               <span className="discount-label l1">desde 50 unidades</span>
             </div>
           )}
         </div>
 
         <div className="card-actions">
-          <button 
+          <button
             className="btn btn-secondary l1"
             onClick={(e) => {
               e.preventDefault()
-              alert('Función de cotización por implementar')
+              setIsModalOpen(true)
             }}
           >
             <span className="material-icons">calculate</span>
@@ -129,6 +147,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </button>
         </div>
       </div>
+
+      {/* Modal con la calculadora */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <QuoteModal
+          product={product}
+          onAddToCart={(p, qty) => {
+            addToCart(p, qty)
+            setIsModalOpen(false)
+          }}
+        />
+      </Modal>
     </div>
   )
 }

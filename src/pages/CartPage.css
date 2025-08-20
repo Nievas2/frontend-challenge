@@ -401,3 +401,23 @@
     align-self: center;
   }
 }
+
+#quote-summary input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+#quote-summary h2 {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #343a40;
+}
+
+.discount-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

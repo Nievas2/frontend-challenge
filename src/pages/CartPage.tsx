@@ -2,12 +2,60 @@ import { useState } from "react"
 import "./CartPage.css"
 import { useCart } from "../components/CartContext"
 import { CartItem } from "../types/Product"
+import { Link } from "react-router-dom"
+import { products } from "../data/products"
 
 const CartPage = () => {
-  const { items, subtotal, total, itemCount, updateQuantity, removeFromCart } =
+  const { items, subtotal, itemCount, updateQuantity, removeFromCart } =
     useCart()
 
   const [error, setError] = useState<string>("")
+
+  // Datos de empresa
+  const [companyData, setCompanyData] = useState({
+    name: "",
+    cuit: "",
+    address: "",
+    email: "",
+  })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setCompanyData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  let finalTotal = subtotal
+  if (subtotal > 50000) {
+    finalTotal = subtotal
+  } else {
+    finalTotal = subtotal + 15000 // add shipping cost
+  }
+
+  const handleExportPDF = () => {
+    const printContent = document.getElementById("quote-summary")?.innerHTML
+    const printWindow = window.open("", "", "width=800,height=600")
+    if (printWindow && printContent) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Cotización</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              h1, h2 { color: #333; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background: #f4f4f4; }
+            </style>
+          </head>
+          <body>
+            ${printContent}
+          </body>
+        </html>
+      `)
+      printWindow.document.close()
+      printWindow.print()
+    }
+  }
 
   const handleQuantityChange = (
     productId: number,
@@ -16,6 +64,10 @@ const CartPage = () => {
     selectedSize?: string
   ) => {
     try {
+      const product = products.find((p) => p.id === productId)
+      if (product && newQuantity > product.stock) {
+        return setError("La cantidad supera el stock disponible")
+      }
       setError("")
       updateQuantity(productId, newQuantity, selectedColor, selectedSize)
     } catch (err) {
@@ -35,10 +87,7 @@ const CartPage = () => {
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(price)
+    return `$${price.toLocaleString()} CLP`
   }
 
   if (items.length === 0) {
@@ -74,7 +123,7 @@ const CartPage = () => {
             {error && <div className="error-message">{error}</div>}
 
             <div className="cart-items-list">
-              {items.map((item : CartItem) => (
+              {items.map((item: CartItem) => (
                 <div
                   key={`${item.id}-${item.selectedColor}-${item.selectedSize}`}
                   className="cart-item"
@@ -206,7 +255,38 @@ const CartPage = () => {
           </div>
 
           <div className="cart-summary">
-            <div className="summary-card">
+            <div className="summary-card" id="quote-summary">
+              {/* Formulario empresa */}
+              <h2>Datos de la Empresa</h2>
+              <input
+                type="text"
+                name="name"
+                placeholder="Nombre de la empresa"
+                value={companyData.name}
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="cuit"
+                placeholder="CUIT"
+                value={companyData.cuit}
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="address"
+                placeholder="Dirección"
+                value={companyData.address}
+                onChange={handleInputChange}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={companyData.email}
+                onChange={handleInputChange}
+              />
+
               <h2>Resumen del pedido</h2>
 
               <div className="summary-row">
@@ -216,20 +296,53 @@ const CartPage = () => {
 
               <div className="summary-row">
                 <span>Envío</span>
-                <span>Calculado en checkout</span>
+                {finalTotal > 50000 ? (
+                  <>
+                    <div className="discount-info">
+                      <p>Envio gratis</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="discount-info">
+                    <p>+{formatPrice(15000)}</p>
+                  </div>
+                )}
               </div>
+
+              {/* Descuentos */}
+              <h2>Descuentos</h2>
+              {items.map((item: CartItem) => {
+                const discount = item.basePrice - item.unitPrice
+                return (
+                  discount > 0 && (
+                    <div className="summary-row" key={item.id}>
+                      <span>
+                        {item.name} / {item.selectedColor}{" "}
+                        {item.selectedSize}
+                      </span>
+                      <span>-{formatPrice(discount * item.quantity)}</span>
+                    </div>
+                  )
+                )
+              })}
+
+              {/* Impuestos */}
 
               <div className="summary-total">
                 <span>Total</span>
-                <span>{formatPrice(total)}</span>
+                <span>{formatPrice(finalTotal)}</span>
               </div>
+            </div>
 
-              <button className="checkout-btn">Proceder al checkout</button>
+            <button className="checkout-btn" onClick={handleExportPDF}>
+              Exportar Cotización en PDF
+            </button>
 
+            <Link to="/">
               <button className="continue-shopping-btn secondary">
                 Continuar comprando
               </button>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
