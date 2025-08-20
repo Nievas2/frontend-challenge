@@ -20,11 +20,12 @@ const ProductList = () => {
       filtered = filtered.filter(product => product.category === category)
     }
 
-    // Search filter
+    // Search filter (case insensitive)
     if (search) {
-      filtered = filtered.filter(product => 
-        product.name.includes(search) ||
-        product.sku.includes(search)
+      const searchLower = search.toLowerCase()
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchLower) ||
+        product.sku.toLowerCase().includes(searchLower)
       )
     }
 
