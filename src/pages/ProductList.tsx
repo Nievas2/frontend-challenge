@@ -6,16 +6,16 @@ import { Product } from "../types/Product"
 import "./ProductList.css"
 
 const ProductList = () => {
-  const [filteredProducts, setFilteredProducts] =
-    useState<Product[]>(allProducts)
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [sortBy, setSortBy] = useState("name")
-  const [selectedSupplier, setSelectedSupplier] = useState("all")
   const [priceRange, setPriceRange] = useState<{
     min: number | null
     max: number | null
   }>({ min: null, max: null })
+  const [filteredProducts, setFilteredProducts] =
+    useState<Product[]>(allProducts)
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedSupplier, setSelectedSupplier] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [sortBy, setSortBy] = useState("name")
 
   const filterProducts = (
     category: string,
