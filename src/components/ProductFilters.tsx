@@ -54,7 +54,7 @@ const ProductFilters = ({
 
         {/* Category Filters */}
         <div className="filter-section">
-          <h3 className="filter-title p1-medium">Categorías</h3>
+          <h2 className="filter-title p1-medium">Categorías</h2>
           <div className="category-filters">
             {categories.map((category) => (
               <button
@@ -79,6 +79,7 @@ const ProductFilters = ({
             value={selectedSupplier}
             onChange={(e) => onSupplierChange(e.target.value)}
             className="sort-select p1"
+            aria-label="Seleccionar proveedor"
           >
             <option value="all">Todos</option>
             {suppliers.map((s) => (
@@ -121,8 +122,11 @@ const ProductFilters = ({
         </div>
 
         {/* Clear Filters */}
-        <div className="filter-section">
-          <button onClick={onClearFilters} className="btn-clear">
+        <div className="filter-section flex justify-center items-center">
+          <button
+            onClick={onClearFilters}
+            className="flex justify-center btn btn-primary cta1"
+          >
             Limpiar todos los filtros
           </button>
         </div>
@@ -134,6 +138,7 @@ const ProductFilters = ({
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
             className="sort-select p1"
+            aria-label="Ordenar productos"
           >
             <option value="name">Nombre A-Z</option>
             <option value="price">Precio</option>
