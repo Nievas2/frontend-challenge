@@ -156,9 +156,11 @@ const PricingCalculator = ({ product, isInCart }: PricingCalculatorProps) => {
           </div>
         </div>
 
+        {/* Error Message */}
         {errorStock && <div className="error-message text-end"
         >{errorStock}</div>}
 
+        {/* In Cart Message */}
         {isInCart && (
          <div className="in-cart-message p1 text-end">
            El producto ya esta en su carrito.
@@ -181,7 +183,6 @@ const PricingCalculator = ({ product, isInCart }: PricingCalculatorProps) => {
           <button 
             className="btn btn-primary cta1"
             onClick={() => {
-              // Add to cart functionality
               addToCart(product, quantity)
             }}
             disabled={errorStock !== null} // Disable if there's a stock error
@@ -193,7 +194,7 @@ const PricingCalculator = ({ product, isInCart }: PricingCalculatorProps) => {
 
         {/* Additional Info */}
         <div className="additional-info">
-          <div className="info-item">
+          <div className="info-item border-right-info">
             <span className="material-icons">local_shipping</span>
             <div className="info-content">
               <span className="info-title l1">Envío gratis</span>
@@ -201,7 +202,7 @@ const PricingCalculator = ({ product, isInCart }: PricingCalculatorProps) => {
             </div>
           </div>
           
-          <div className="info-item">
+          <div className="info-item border-right-info">
             <span className="material-icons">schedule</span>
             <div className="info-content">
               <span className="info-title l1">Tiempo de producción</span>

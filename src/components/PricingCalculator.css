@@ -3,7 +3,7 @@
   background: white;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
@@ -193,16 +193,27 @@
 /* Additional Info */
 .additional-info {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  justify-content: space-between;
   padding-top: 16px;
   border-top: 1px solid #e2e8f0;
+}
+
+.additional-info:first-of-type {
+  border-right: 1px solid #e2e8f0;
 }
 
 .info-item {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-left: 12px;
+  width: 100%;
+  padding-right: 12px
+}
+
+.border-right-info {
+  border-right: 1px solid #e2e8f0;
 }
 
 .info-item .material-icons {
@@ -231,27 +242,37 @@
   .calculator-content {
     padding: 20px;
   }
-  
+
   .price-breaks {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 8px;
   }
-  
+
   .price-break {
     padding: 12px;
   }
-  
+
   .calculator-actions {
     flex-direction: column;
   }
-  
+
   .quantity-input-group {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .quantity-input {
     max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .additional-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .border-right-info {
+    border-right: none;
   }
 }
 
@@ -260,15 +281,15 @@
   .calculator-content {
     padding: 16px;
   }
-  
+
   .price-breaks {
     grid-template-columns: 1fr;
   }
-  
+
   .calculator-content {
     gap: 20px;
   }
-  
+
   .price-summary {
     padding: 16px;
   }
