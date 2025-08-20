@@ -12,20 +12,23 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
 
   // Calculate best pricing for quantity
   const calculatePrice = (qty: number) => {
-    if (!product.priceBreaks || product.priceBreaks.length === 0) {
-      return product.basePrice * qty
-    }
+   if (!product.priceBreaks || product.priceBreaks.length === 0) {
+     return product.basePrice * qty
+   }
 
-    // Find applicable price break
-    let applicableBreak = product.priceBreaks[0]
-    for (let i = 0; i < product.priceBreaks.length; i++) {
-      if (qty >= product.priceBreaks[i].minQty) {
-        applicableBreak = product.priceBreaks[i]
-      }
-    }
+   // Sort price breaks by minQty in ascending order
+   const sortedBreaks = [...product.priceBreaks].sort((a, b) => a.minQty - b.minQty)
 
-    return applicableBreak.price * qty
-  }
+   // Find the applicable price break
+   let applicableBreak = sortedBreaks[0]
+   for (let i = 0; i < sortedBreaks.length; i++) {
+     if (qty >= sortedBreaks[i].minQty) {
+       applicableBreak = sortedBreaks[i]
+     }
+   }
+ 
+   return applicableBreak.price * qty
+ }
 
   // Calculate discount amount
   const getDiscount = (qty: number) => {
@@ -79,33 +82,35 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
           <div className="price-breaks-section">
             <h4 className="breaks-title p1-medium">Descuentos por volumen</h4>
             <div className="price-breaks">
-              {product.priceBreaks.map((priceBreak, index) => {
-                const isActive = quantity >= priceBreak.minQty
-                const isSelected = selectedBreak === index
-                
-                return (
-                  <div 
-                    key={index}
-                    className={`price-break ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedBreak(index)
-                      setQuantity(priceBreak.minQty)
-                    }}
-                  >
-                    <div className="break-quantity l1">
-                      {priceBreak.minQty}+ unidades
-                    </div>
-                    <div className="break-price p1-medium">
-                      {formatPrice(priceBreak.price)}
-                    </div>
-                    {priceBreak.discount && (
-                      <div className="break-discount l1">
-                        -{priceBreak.discount}%
+              {[...product.priceBreaks]
+                .sort((a, b) => a.minQty - b.minQty)
+                .map((priceBreak, index) => {
+                  const isActive = quantity >= priceBreak.minQty
+                  const isSelected = selectedBreak === index
+                  
+                  return (
+                    <div 
+                      key={index}
+                      className={`price-break ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}`}
+                      onClick={() => {
+                        setSelectedBreak(index)
+                        setQuantity(priceBreak.minQty)
+                      }}
+                    >
+                      <div className="break-quantity l1">
+                        {priceBreak.minQty}+ unidades
                       </div>
-                    )}
-                  </div>
-                )
-              })}
+                      <div className="break-price p1-medium">
+                        {formatPrice(priceBreak.price)}
+                      </div>
+                      {priceBreak.discount && (
+                        <div className="break-discount l1">
+                          -{priceBreak.discount}%
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
             </div>
           </div>
         )}
