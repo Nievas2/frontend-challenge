@@ -120,6 +120,11 @@ const ProductList = () => {
     )
   }
 
+  const countCategories = () => {
+    const categories = new Set(allProducts.map((product) => product.category))
+    return categories.size
+  }
+
   return (
     <div className="product-list-page">
       <div className="container">
@@ -140,7 +145,7 @@ const ProductList = () => {
               <span className="stat-label l1">productos</span>
             </div>
             <div className="stat-item">
-              <span className="stat-value p1-medium">6</span>
+              <span className="stat-value p1-medium">{countCategories()}</span>
               <span className="stat-label l1">categorías</span>
             </div>
           </div>
