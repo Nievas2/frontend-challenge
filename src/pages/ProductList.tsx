@@ -1,22 +1,25 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ProductCard from "../components/ProductCard"
 import ProductFilters from "../components/ProductFilters"
 import { products as allProducts } from "../data/products"
 import { Product } from "../types/Product"
 import "./ProductList.css"
+import { useSearchParams } from "react-router-dom"
 
 const ProductList = () => {
-  const [priceRange, setPriceRange] = useState<{
-    min: number | null
-    max: number | null
-  }>({ min: null, max: null })
-  const [filteredProducts, setFilteredProducts] =
-    useState<Product[]>(allProducts)
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedSupplier, setSelectedSupplier] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [sortBy, setSortBy] = useState("name")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [priceRange, setPriceRange] = useState<{ min: number | null; max: number | null }>({
+    min: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : null,
+    max: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : null,
+  })
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts)
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all")
+  const [selectedSupplier, setSelectedSupplier] = useState(searchParams.get("supplier") || "all")
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
+  const [sortBy, setSortBy] = useState(searchParams.get("sort") || "name")
 
+  // function to filter products based on selected criteria
+  // This function will be called whenever the filters change
   const filterProducts = (
     category: string,
     search: string,
@@ -25,105 +28,50 @@ const ProductList = () => {
     price: { min: number | null; max: number | null }
   ) => {
     let filtered = [...allProducts]
-
-    if (category !== "all") {
-      filtered = filtered.filter((product) => product.category === category)
-    }
-
-    if (supplier !== "all") {
-      filtered = filtered.filter((product) => {
-        console.log(`Filtrando por proveedor: ${product.supplier}`)
-
-        return product.supplier === supplier
-      })
-      console.log(`Filtrando por proveedor: ${filtered}`)
-    }
-
-    if (price.min !== null) {
-      filtered = filtered.filter((product) => product.basePrice >= price.min!)
-    }
-
-    if (price.max !== null) {
-      filtered = filtered.filter((product) => product.basePrice <= price.max!)
-    }
-
+    if (category !== "all") filtered = filtered.filter(p => p.category === category)
+    if (supplier !== "all") filtered = filtered.filter(p => p.supplier === supplier)
+    if (price.min !== null) filtered = filtered.filter(p => p.basePrice >= price.min!)
+    if (price.max !== null) filtered = filtered.filter(p => p.basePrice <= price.max!)
     if (search) {
       const searchLower = search.toLowerCase()
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchLower) ||
-          product.sku.toLowerCase().includes(searchLower)
-      )
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(searchLower) || p.sku.toLowerCase().includes(searchLower))
     }
-
     switch (sort) {
-      case "name":
-        filtered.sort((a, b) => a.name.localeCompare(b.name))
-        break
-      case "price":
-        filtered.sort((a, b) => a.basePrice - b.basePrice)
-        break
-      case "stock":
-        filtered.sort((a, b) => b.stock - a.stock)
-        break
+      case "name": filtered.sort((a, b) => a.name.localeCompare(b.name)); break
+      case "price": filtered.sort((a, b) => a.basePrice - b.basePrice); break
+      case "stock": filtered.sort((a, b) => b.stock - a.stock); break
     }
-
     setFilteredProducts(filtered)
   }
 
-  const handleSupplierChange = (supplier: string) => {
-    setSelectedSupplier(supplier)
-    filterProducts(selectedCategory, searchQuery, sortBy, supplier, priceRange)
-  }
+  // useEffect to update filtered products when filters change
+  useEffect(() => {
+    const params: Record<string, string> = {}
+    if (selectedCategory !== "all") params.category = selectedCategory
+    if (selectedSupplier !== "all") params.supplier = selectedSupplier
+    if (searchQuery) params.search = searchQuery
+    if (sortBy !== "name") params.sort = sortBy
+    if (priceRange.min !== null) params.minPrice = String(priceRange.min)
+    if (priceRange.max !== null) params.maxPrice = String(priceRange.max)
 
-  const handlePriceRangeChange = (min: number | null, max: number | null) => {
-    setPriceRange({ min, max })
-    filterProducts(selectedCategory, searchQuery, sortBy, selectedSupplier, {
-      min,
-      max,
-    })
-  }
+    setSearchParams(params)
+    filterProducts(selectedCategory, searchQuery, sortBy, selectedSupplier, priceRange)
+  }, [selectedCategory, selectedSupplier, searchQuery, sortBy, priceRange, setSearchParams])
 
+  const handleCategoryChange = (category: string) => setSelectedCategory(category)
+  const handleSupplierChange = (supplier: string) => setSelectedSupplier(supplier)
+  const handleSearchChange = (search: string) => setSearchQuery(search)
+  const handleSortChange = (sort: string) => setSortBy(sort)
+  const handlePriceRangeChange = (min: number | null, max: number | null) => setPriceRange({ min, max })
   const handleClearFilters = () => {
     setSelectedCategory("all")
+    setSelectedSupplier("all")
     setSearchQuery("")
     setSortBy("name")
-    setSelectedSupplier("all")
     setPriceRange({ min: null, max: null })
-    setFilteredProducts(allProducts)
   }
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category)
-    filterProducts(category, searchQuery, sortBy, selectedSupplier, priceRange)
-  }
-
-  const handleSearchChange = (search: string) => {
-    setSearchQuery(search)
-    filterProducts(
-      selectedCategory,
-      search,
-      sortBy,
-      selectedSupplier,
-      priceRange
-    )
-  }
-
-  const handleSortChange = (sort: string) => {
-    setSortBy(sort)
-    filterProducts(
-      selectedCategory,
-      searchQuery,
-      sort,
-      selectedSupplier,
-      priceRange
-    )
-  }
-
-  const countCategories = () => {
-    const categories = new Set(allProducts.map((product) => product.category))
-    return categories.size
-  }
+  const countCategories = () => new Set(allProducts.map(p => p.category)).size
 
   return (
     <div className="product-list-page">
