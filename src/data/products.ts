@@ -80,7 +80,7 @@ export const products: Product[] = [
     supplier: 'smart-gifts',
     status: 'inactive',
     basePrice: 6800,
-    stock: 0,
+    stock: 150,
     description: 'Polera polo de algodón 100% con bordado personalizable.',
     colors: ['Azul', 'Blanco', 'Negro', 'Gris'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
