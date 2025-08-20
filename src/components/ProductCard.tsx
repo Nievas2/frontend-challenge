@@ -86,14 +86,19 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {getStockStatus(product.stock)}
           </div>
 
-          {/* Features - Bug: displays all features without limit */}
+          {/* Features */}
           {product.features && (
             <div className="product-features">
-              {product.features.map((feature, index) => (
+              {product.features.slice(0, 4).map((feature, index) => (
                 <span key={index} className="feature-tag l1">
                   {feature}
                 </span>
               ))}
+              {product.features.length > 4 && (
+                <span className="feature-tag l1 more-features">
+                  +{product.features.length - 4} más
+                </span>
+              )}
             </div>
           )}
 
