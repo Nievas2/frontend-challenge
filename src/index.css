@@ -187,6 +187,8 @@ body {
 .justify-center { justify-content: center; }
 .justify-between { justify-content: space-between; }
 
+.text-end { text-align: end; }
+
 .gap-1 { gap: 8px; }
 .gap-2 { gap: 16px; }
 .gap-3 { gap: 24px; }

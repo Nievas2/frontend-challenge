@@ -10,6 +10,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null)
   const [selectedColor, setSelectedColor] = useState<string>('')
   const [selectedSize, setSelectedSize] = useState<string>('')
+  const [errorStock, setErrorStock] = useState<string | null>(null)
   const [quantity, setQuantity] = useState<number>(1)
 
   useEffect(() => {
@@ -156,11 +157,19 @@ const ProductDetail = () => {
 
             {/* Quick Actions */}
             <div className="product-actions">
+              <span className="product-stock l1">
+               {product.stock} unidades disponibles
+              </span>
               <div className="quantity-selector">
                 <label className="quantity-label l1">Cantidad:</label>
                 <div className="quantity-controls">
                   <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    onClick={() => {
+                      if(quantity - 1 > product.stock) {
+                        return setErrorStock('No hay suficiente stock disponible')
+                      }
+                      if(errorStock) setErrorStock(null)
+                      setQuantity(Math.max(1, quantity - 1))}}
                     className="quantity-btn"
                   >
                     <span className="material-icons">remove</span>
@@ -168,18 +177,32 @@ const ProductDetail = () => {
                   <input 
                     type="number" 
                     value={quantity} 
-                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    onChange={(e) => {
+                      if(parseInt(e.target.value) > product.stock) {
+                        return setErrorStock('No hay suficiente stock disponible')
+                      }
+                      if(errorStock) setErrorStock(null)
+                      setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    }
                     className="quantity-input"
-                    min="1"
+                    min="1"                  
                   />
                   <button 
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => {
+                      if(quantity + 1 > product.stock) {
+                        return setErrorStock('No hay suficiente stock disponible')
+                      }
+                      if(errorStock) setErrorStock(null)
+                      
+                      setQuantity(quantity + 1)}
+                    }
                     className="quantity-btn"
                   >
                     <span className="material-icons">add</span>
                   </button>
                 </div>
               </div>
+                {errorStock && <span className="error-message">{errorStock}</span>}
 
               <div className="action-buttons">
                 <button 

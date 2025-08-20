@@ -9,6 +9,7 @@ interface PricingCalculatorProps {
 const PricingCalculator = ({ product }: PricingCalculatorProps) => {
   const [quantity, setQuantity] = useState<number>(1)
   const [selectedBreak, setSelectedBreak] = useState<number>(0)
+  const [errorStock, setErrorStock] = useState<string | null>(null)
 
   // Calculate best pricing for quantity
   const calculatePrice = (qty: number) => {
@@ -68,12 +69,18 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
             <input
               type="number"
               value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) => {
+                if(parseInt(e.target.value) > product.stock) {
+                  setErrorStock('No hay suficiente stock disponible para añadir al carrito.')
+                  return setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+                }
+                if(errorStock) setErrorStock(null)
+                setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              }
               className="quantity-input p1"
               min="1"
-              max="10000"
             />
-            <span className="quantity-unit l1">unidades</span>
+            <span className="quantity-unit l1">unidades de {product.stock} disponibles</span>
           </div>
         </div>
 
@@ -146,6 +153,9 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
           </div>
         </div>
 
+        {errorStock && <div className="error-message text-end"
+        >{errorStock}</div>}
+
         {/* Actions */}
         <div className="calculator-actions">
           <button 
@@ -165,6 +175,7 @@ const PricingCalculator = ({ product }: PricingCalculatorProps) => {
               // Add to cart functionality
               alert('Función de agregar al carrito por implementar')
             }}
+            disabled={errorStock !== null} // Disable if there's a stock error
           >
             <span className="material-icons">shopping_cart</span>
             Agregar al carrito

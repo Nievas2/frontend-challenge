@@ -45,6 +45,15 @@
   gap: 16px;
 }
 
+.product-stock {
+  font-weight: 500;
+  margin-bottom: -8px;
+}
+
+.error-message {
+  color: #ef4444;
+}
+
 .main-image {
   aspect-ratio: 1;
   background: #f8fafc;
