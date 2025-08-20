@@ -1,4 +1,10 @@
-import { createContext, useContext, useReducer, ReactNode, useEffect } from "react"
+import {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from "react"
 import { CartItem, Product } from "../types/Product"
 
 // types for cart state and actions
@@ -150,7 +156,6 @@ function loadFromLocalStorage(): CartState {
   return initialState
 }
 
-
 // Initial cart state
 const initialState: CartState = {
   items: [],
@@ -208,7 +213,9 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
         // Check maximum quantity for the new total quantity
         if (product.maxQuantity && newQuantity > product.maxQuantity) {
-          throw new Error(`The maximum quantity is ${product.maxQuantity} units`)
+          throw new Error(
+            `The maximum quantity is ${product.maxQuantity} units`
+          )
         }
 
         // Create updated item with new quantity and recalculate prices
@@ -254,7 +261,6 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         action.payload
 
       if (quantity <= 0) {
-        // If quantity is 0 or less, remove the item
         return cartReducer(state, {
           type: "REMOVE_FROM_CART",
           payload: { productId, selectedColor, selectedSize },
@@ -271,30 +277,15 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         throw new Error("Product not found in cart")
       }
 
-      const item = state.items[itemIndex]
+      const existingItem = state.items[itemIndex]
 
-      // Check available stock
-      if (quantity > item.stock) {
-        throw new Error(
-          `Insufficient stock. Only ${item.stock} units available`
-        )
-      }
-
-      // Check minimum and maximum quantity
-      if (item.minQuantity && quantity < item.minQuantity) {
-        throw new Error(`The minimum quantity is ${item.minQuantity} units`)
-      }
-
-      if (item.maxQuantity && quantity > item.maxQuantity) {
-        throw new Error(`The maximum quantity is ${item.maxQuantity} units`)
-      }
-
-      // Create updated item with new quantity and recalculated prices
       const updatedItem = createCartItem(
-        item,
+        {
+          ...existingItem,
+        },
         quantity,
-        item.selectedColor,
-        item.selectedSize
+        selectedColor,
+        selectedSize
       )
 
       const newItems = [...state.items]
@@ -317,7 +308,11 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 // Context provider
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState, loadFromLocalStorage)
+  const [state, dispatch] = useReducer(
+    cartReducer,
+    initialState,
+    loadFromLocalStorage
+  )
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -411,7 +406,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     </CartContext.Provider>
   )
 }
-
 
 // Custom hook to use the context
 export function useCart(): CartContextType {
