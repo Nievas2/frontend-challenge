@@ -79,7 +79,15 @@ const ProductDetail = () => {
           <div className="product-images">
             <div className="main-image">
               <div className="image-placeholder">
-                <span className="material-icons">image</span>
+                {product.image ? (
+                  <img
+                    className="product-image"
+                    src={product.image}
+                    alt={product.name}
+                  />
+                ) : (
+                  <span className="material-icons">image</span>
+                )}
               </div>
             </div>
             

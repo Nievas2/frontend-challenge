@@ -140,14 +140,18 @@ const CartPage = () => {
                   className="cart-item"
                 >
                   <div className="item-header">
-                    <div className="item-image">
-                      {item.image ? (
-                        <img src={item.image} alt={item.name} />
-                      ) : (
-                        <div className="placeholder-image">
-                          <span>📦</span>
-                        </div>
-                      )}
+                    <div className="main-image">
+                      <div className="image-placeholder">
+                        {item.image ? (
+                          <img
+                            className="product-image"
+                            src={item.image}
+                            alt={item.name}
+                          />
+                        ) : (
+                          <span className="material-icons">image</span>
+                        )}
+                      </div>
                     </div>
 
                     <div className="item-details">
