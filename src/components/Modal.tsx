@@ -11,6 +11,7 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   const modalRoot = document.getElementById("modal-root") || document.body
 
+  /* Close modal when escape key is pressed */
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose()
@@ -21,6 +22,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   if (!isOpen) return null
 
+  /* Render modal using React Portal */
+  // This allows the modal to be rendered outside the normal DOM hierarchy
   return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>

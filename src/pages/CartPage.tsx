@@ -8,10 +8,10 @@ import { products } from "../data/products"
 const CartPage = () => {
   const { items, subtotal, itemCount, updateQuantity, removeFromCart } =
     useCart()
-
   const [error, setError] = useState<string>("")
 
-  // Datos de empresa
+  // State to hold company data for the quote
+  // This will be used to fill in the quote details when exporting to PDF
   const [companyData, setCompanyData] = useState({
     name: "",
     cuit: "",
@@ -19,11 +19,15 @@ const CartPage = () => {
     email: "",
   })
 
+  // Handle input changes for company data
+  // This function updates the companyData state when the user types in the input fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setCompanyData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Calculate final total with shipping cost
+  // If subtotal is greater than 50000, shipping is free
   let finalTotal = subtotal
   if (subtotal > 50000) {
     finalTotal = subtotal
@@ -31,6 +35,7 @@ const CartPage = () => {
     finalTotal = subtotal + 15000 // add shipping cost
   }
 
+  /* Function to export PDF */
   const handleExportPDF = () => {
     const printContent = document.getElementById("quote-summary")?.innerHTML
     const printWindow = window.open("", "", "width=800,height=600")
@@ -57,6 +62,7 @@ const CartPage = () => {
     }
   }
 
+  // Function to handle quantity change
   const handleQuantityChange = (
     productId: number,
     newQuantity: number,
@@ -78,6 +84,7 @@ const CartPage = () => {
     }
   }
 
+  // Function to handle item removal
   const handleRemoveItem = (
     productId: number,
     selectedColor?: string,
@@ -86,10 +93,12 @@ const CartPage = () => {
     removeFromCart(productId, selectedColor, selectedSize)
   }
 
+  // Function to format price
   const formatPrice = (price: number) => {
     return `$${price.toLocaleString()} CLP`
   }
 
+  // If the cart is empty, show an empty cart message
   if (items.length === 0) {
     return (
       <div className="cart-page">
@@ -116,12 +125,14 @@ const CartPage = () => {
           <a href="/">Catálogo</a> / Carrito ({itemCount})
         </div>
 
+        {/* Cart content */}
         <div className="cart-content">
           <div className="cart-items">
             <h1>Carrito de Compras</h1>
 
             {error && <div className="error-message">{error}</div>}
 
+            {/* List of cart items */}
             <div className="cart-items-list">
               {items.map((item: CartItem) => (
                 <div
@@ -254,6 +265,7 @@ const CartPage = () => {
             </div>
           </div>
 
+          {/* Cart summary */}
           <div className="cart-summary">
             <div className="summary-card" id="quote-summary">
               {/* Formulario empresa */}
@@ -317,8 +329,7 @@ const CartPage = () => {
                   discount > 0 && (
                     <div className="summary-row" key={item.id}>
                       <span>
-                        {item.name} / {item.selectedColor}{" "}
-                        {item.selectedSize}
+                        {item.name} / {item.selectedColor} {item.selectedSize}
                       </span>
                       <span>-{formatPrice(discount * item.quantity)}</span>
                     </div>

@@ -137,6 +137,7 @@ const ProductList = () => {
             </p>
           </div>
 
+          {/* Page Stats */}
           <div className="page-stats">
             <div className="stat-item">
               <span className="stat-value p1-medium">
@@ -191,6 +192,7 @@ const ProductList = () => {
             </div>
           ) : (
             <div className="products-grid">
+              {/* Render filtered products */}
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

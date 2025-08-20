@@ -12,7 +12,7 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
   const [companyEmail, setCompanyEmail] = useState("")
   const [quantity, setQuantity] = useState(1)
 
-  // 🔹 Cálculo de precio según priceBreaks
+  /* Calculate best pricing for quantity */
   const calculatePrice = (qty: number) => {
     if (!product.priceBreaks || product.priceBreaks.length === 0) {
       return product.basePrice * qty
@@ -29,6 +29,7 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
     return applicableBreak.price * qty
   }
 
+  /* Calculate discount amount */
   const total = calculatePrice(quantity)
   const discountPercent =
     product.priceBreaks && product.priceBreaks.length > 0
@@ -37,8 +38,10 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
         100
       : 0
 
+  /* Format price for display */
   const formatPrice = (price: number) => `$${price.toLocaleString()} CLP`
 
+  /* Handle PDF export */
   const handleExportPDF = () => {
     const printContent = document.getElementById("quote-summary")?.innerHTML
     const printWindow = window.open("", "", "width=800,height=600")
@@ -67,7 +70,7 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
 
   return (
     <div className="quote-modal" id="quote-summary">
-      {/* Datos de Empresa */}
+      {/* Information about the company */}
       <h3>Datos de la Empresa</h3>
       <div className="company-form">
         <input
@@ -84,7 +87,7 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
         />
       </div>
 
-      {/* Cantidad */}
+      {/* Quantity selection */}
       <div className="quantity-section">
         <label>Cantidad:</label>
         <input
@@ -99,7 +102,7 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
         <span className="stock-note">{product.stock} disponibles</span>
       </div>
 
-      {/* Resumen de precios */}
+      {/* Price summary */}
       <div className="price-summary">
         <div>
           <strong>Precio unitario:</strong> {formatPrice(total / quantity)}
@@ -117,7 +120,7 @@ const QuoteModal = ({ product, onAddToCart }: QuoteModalProps) => {
         </div>
       </div>
 
-      {/* Acciones */}
+      {/* Actions */}
       <div className="actions">
         <button
           className="btn btn-primary"

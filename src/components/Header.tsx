@@ -8,6 +8,7 @@ const Header = () => {
   const patchname = useLocation().pathname
   const { items } = useCart()
 
+  // Toggle mobile menu open/close state
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }

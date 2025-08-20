@@ -61,9 +61,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <Link to={`/product/${product.id}`} className="product-link">
         {/* Product Image */}
         <div className="product-image">
-          {/* Bug: no real image handling */}
+          {/* Placeholder for image or icon */}
+          {/* If product has an image, display it; otherwise, show a placeholder icon */}
           <div className="image-placeholder">
-            <span className="material-icons">image</span>
+            {product.image ? (
+              <img
+                className="product-image"
+                src={product.image}
+                alt={product.name}
+              />
+            ) : (
+              <span className="material-icons">image</span>
+            )}
           </div>
 
           {/* Status Badge */}
@@ -72,28 +81,32 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         {/* Product Info */}
         <div className="product-info">
+          {/* Product Header */}
           <div className="product-header">
             <h3 className="product-name p1-medium">{product.name}</h3>
             <p className="product-sku l1">{product.sku}</p>
           </div>
 
+          {/* Product Details */}
           <div className="product-details">
             <div className="product-category">
               <span className="material-icons">category</span>
               <span className="l1">{product.category}</span>
             </div>
-
+            {/* Stock */}
             {getStockStatus(product.stock)}
           </div>
 
           {/* Features */}
           {product.features && (
             <div className="product-features">
+              {/* Display the first 4 features */}
               {product.features.slice(0, 4).map((feature, index) => (
                 <span key={index} className="feature-tag l1">
                   {feature}
                 </span>
               ))}
+              {/* Display "more features" if there are more features */}
               {product.features.length > 4 && (
                 <span className="feature-tag l1 more-features">
                   +{product.features.length - 4} más
@@ -108,6 +121,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
               <span className="colors-label l1">
                 {product.colors.length} colores:
               </span>
+
+              {/* Display the first 3 colors */}
               <div className="colors-preview">
                 {product.colors.slice(0, 3).map((color, index) => (
                   <div key={index} className="color-dot" title={color}></div>
@@ -126,9 +141,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Product Footer */}
       <div className="product-footer">
         <div className="price-section">
+          {/* Current Price */}
           <div className="current-price p1-medium">
             {formatPrice(product.basePrice)}
           </div>
+
+          {/* Discount */}
           {getDiscountPrice() && (
             <div className="discount-info">
               <span className="discount-price l1">
@@ -139,6 +157,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
 
+        {/* Add to Cart Button */}
         <div className="card-actions">
           <button
             className="btn btn-secondary l1"

@@ -16,6 +16,8 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState<number>(1)
   const {  addToCart, checkIsInCart, items } = useCart()
 
+  // Check if the product is already in the cart
+  // This effect runs whenever the cart items, selected color, or selected size change
   useEffect(() => {
     const cartItem = checkIsInCart(parseInt(id ?? '0'), selectedColor, selectedSize)
     if (cartItem) {
@@ -25,6 +27,8 @@ const ProductDetail = () => {
     }
   }, [items, selectedColor, selectedSize])
 
+  // Fetch product details based on ID from URL params
+  // This effect runs when the component mounts or when the ID changes
   useEffect(() => {
     if (id) {
       const foundProduct = products.find(p => p.id === parseInt(id))
@@ -91,6 +95,7 @@ const ProductDetail = () => {
 
           {/* Product Info */}
           <div className="product-details">
+            {/* Product Header */}
             <div className="product-header">
               <h1 className="product-title h2">{product.name}</h1>
               <p className="product-sku p1">SKU: {product.sku}</p>
