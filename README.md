@@ -20,6 +20,10 @@ npm run dev
 
 # 4. Abrir en el navegador
 # http://localhost:3000
+
+# 5. Ver tu evaluación
+# npm run evaluate
+
 ```
 
 ---
