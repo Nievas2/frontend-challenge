@@ -22,7 +22,7 @@ npm run dev
 # http://localhost:3000
 
 # 5. Ver tu evaluación
-# npm run evaluate
+npm run evaluate
 
 ```
 
